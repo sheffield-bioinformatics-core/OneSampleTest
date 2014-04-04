@@ -1,4 +1,4 @@
-####shiny::runGitHub("stats-teaching","markdunning")
+####shiny::runGitHub("OneSidedT","markdunning")
 
 library(shiny)
 
