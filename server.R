@@ -11,7 +11,7 @@ shinyServer(function(input, output){
                     if (is.null(inFile))
                     return(NULL)
                     print(inFile$datapath)
-                    read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote)
+                    read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote,skip=input$skip)
                     #read.csv("GraphPad Course Data/diseaseX.csv")
   })
   
@@ -39,6 +39,7 @@ shinyServer(function(input, output){
   output$mytable= renderDataTable({
     df <- data()
     df
+    dput(df, file="data.rda")
   }
   )
   
@@ -60,8 +61,14 @@ shinyServer(function(input, output){
   p<- ggplot(df, aes(x=X)) + 
     geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
                    binwidth=.5,
-                   colour="black", fill="white") +
-    geom_density(alpha=.2, fill="#FF6666")
+                   colour="black", fill="white") + ylab("")
+
+  p <- p + stat_function(fun=dnorm,
+                           color="red",
+                           arg=list(mean=mean(df$X), 
+                                    sd=sd(df$X)))
+  
+  p
   
   if(input$showMu) p <- p + geom_vline(xintercept = mu,lty=2,col="red")
   print(p)
@@ -97,12 +104,18 @@ shinyServer(function(input, output){
     t.test(X,mu=mu,alternative=alternative)
   })
 
+  
+
   output$summary <- renderPrint({
     datacol <- as.numeric(input$dataCol)
     
     summary(data()[,datacol])
   })
   
+
+
+
+
   output$zdist <- reactivePlot(function(){
   
     mu <- as.numeric(input$mu)
@@ -141,7 +154,154 @@ shinyServer(function(input, output){
     p <- p + geom_vline(xintercept = tstat,lty=2,col="red") + xlim(xlim)
     print(p)
   })
+
+output$downloadScript <- downloadHandler(
+  filename = function() {
+    paste(input$outfile, '.R', sep='')
+  },
+  content = function(file) {
+    #cat(file=file,as.name('myfile <- file.choose()\n'))
+    #cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
+    #cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
+    #cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
+    #cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
+    #cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    df <- dget("data.rda")
+    
+    cat(file=file,as.name("data <-"))
+    cat(file=file,capture.output(dput(df)),append=TRUE)
+    cat(file=file,"\n",append=TRUE)
+    cat(file=file,as.name("head(data)\n"),append=TRUE)
   
+    cat(file=file,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
+    cat(file=file,as.name("X <- data[,datacol]\n"),append=TRUE)
+    cat(file=file,as.name("summary(X)\n"),append=TRUE)
+    cat(file=file,as.name("boxplot(X,horizontal=TRUE)\n"),append=TRUE)
+    
+    cat(file=file,as.name("colnames(data)[datacol] <- 'X'\n"),append=TRUE)
+    cat(file=file, as.name("library(ggplot2)\n"),append=TRUE)
+    cat(file=file, as.name("ggplot(data, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=.5,colour='black', fill='white')+ stat_function(fun=dnorm,color='red',arg=list(mean=mean(data$X), sd=sd(data$X)))\n"),append=TRUE)
+    
+    cat(file=file,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
+    cat(file=file,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
+    cat(file=file,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    cat(file=file,as.name("sessionInfo()\n"),append=TRUE)
+    #formatR::tidy_source(source=file,output = file)
+  }
+)
+
+
+output$downloadMarkdown <- downloadHandler(
+  filename = function() {
+    paste(input$outfile, '.Rmd', sep='')
+  },
+  content = function(file) {
+    #cat(file=file,as.name('myfile <- file.choose()\n'))
+    #cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
+    #cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
+    #cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
+    #cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
+    #cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    script <- gsub(".Rmd",".R",file)
+    df <- dget("data.rda")
+    
+    cat(file=script,as.name("data <-"))
+    cat(file=script,capture.output(dput(df)),append=TRUE)
+    cat(file=script,"\n",append=TRUE)
+    cat(file=script,as.name("head(data)\n"),append=TRUE)
+    
+    cat(file=script,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
+    cat(file=script,as.name("X <- data[,datacol]\n"),append=TRUE)
+    cat(file=script,as.name("summary(X)\n"),append=TRUE)
+    cat(file=script,as.name("boxplot(X,horizontal=TRUE)\n"),append=TRUE)
+    cat(file=script,as.name("colnames(data)[datacol] <- 'X'\n"),append=TRUE)
+    cat(file=script, as.name("library(ggplot2)\n"),append=TRUE)
+    cat(file=script, as.name("ggplot(data, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=.5,colour='black', fill='white')+ stat_function(fun=dnorm,color='red',arg=list(mean=mean(data$X), sd=sd(data$X)))\n"),append=TRUE)
+    
+    cat(file=script,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
+    cat(file=script,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
+    cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    cat(file=script,as.name("sessionInfo()\n"),append=TRUE)
+    knitr:::spin(hair=script,knit = FALSE)
+    rmd <- readLines(file)
+    
+    cat(file = file, paste(input$title, "\n=======================\n"))
+    cat(file=file, as.name(paste("###", input$name, "\n")),append=TRUE)    
+    cat(file=file, as.name(paste("### Report Generated at: ", as.character(Sys.time()), "\n")),append=TRUE)    
+    
+    for(i in 1:length(rmd)){
+      cat(file=file, as.name(paste(rmd[i], "\n")),append=TRUE)
+      
+    }
+    
+    #    formatR::tidy_urce(file,output = file)
+  }
+)
+
+
+output$downloadPDF <- downloadHandler(
+  filename = function(input) {
+    paste('mycode-', Sys.Date(), '.html', sep='')
+  },
+  content = function(file) {
+    #cat(file=file,as.name('myfile <- file.choose()\n'))
+    #cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
+    #cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
+    #cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
+    #cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
+    #cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    script <- gsub(".html",".R",file)
+    df <- dget("data.rda")
+    
+    cat(file=script,as.name("data <-"))
+    cat(file=script,capture.output(dput(df)),append=TRUE)
+    cat(file=script,"\n",append=TRUE)
+    cat(file=script,as.name("head(data)\n"),append=TRUE)
+    
+    cat(file=script,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
+    cat(file=script,as.name("X <- data[,datacol]\n"),append=TRUE)
+    cat(file=script,as.name("summary(X)\n"),append=TRUE)
+    cat(file=script,as.name("boxplot(X,horizontal=TRUE)\n"),append=TRUE)
+    cat(file=script,as.name("hist(X)\n"),append=TRUE)
+    cat(file=script,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
+    cat(file=script,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
+    cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    cat(file=script,as.name("sessionInfo()\n"),append=TRUE)
+    o <- knitr:::spin(hair=script,knit = FALSE)
+    knitr:::knit2html(o)
+    #    formatR::tidy_urce(file,output = file)
+  }
+)
+
+output$thecode <- renderPrint({
+  
+  print(as.name(paste('myfile <- file.choose()')))
+  print(as.name(paste0('sep <- \'', input$sep,'\'')))
+  print(as.name(paste0('quote <- \'', input$quote,'\'')))
+  print(as.name(paste('header <- ', input$header)))
+  print(as.name(paste('skip <- ', input$skip)))
+  print(as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)"))
+  
+  #dump <- dput(data)
+  #print(as.name(paste("data <-", capture.output(dput(data)))))
+  print(as.name("head(data)"))
+  
+  print(as.name(paste("datacol <- ", input$dataCol)))
+  print(as.name("X <- data[,datacol]"))
+  print(as.name("summary(X)"))
+  print(as.name("boxplot(X,horizontal=TRUE)"))
+  
+  print(as.name("colnames(data)[datacol] <- 'X'"))
+  print(as.name("library(ggplot2)"))
+  print(as.name("ggplot(data, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=.5,colour='black', fill='white')+ stat_function(fun=dnorm,color='red',arg=list(mean=mean(data$X), sd=sd(data$X)))"))
+  
+  
+  print(as.name(paste0('alternative <- \'', input$alternative,'\'')))
+  print(as.name(paste("mu <- ", input$mu)))
+  print(as.name("t.test(X,mu=mu,alternative=alternative)"))
+  print(as.name("sessionInfo()"))
+}
+)
   
   
 }

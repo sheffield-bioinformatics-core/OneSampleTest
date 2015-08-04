@@ -7,6 +7,7 @@ shinyUI(pageWithSidebar(
   headerPanel("T-test Example"),
   
   sidebarPanel(
+    h2("Data Import Parameters"),
     fileInput('file1', 'Choose CSV File',
               accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
     checkboxInput('header', 'Header', TRUE),
@@ -20,48 +21,56 @@ shinyUI(pageWithSidebar(
                    'Double Quote'='"',
                    'Single Quote'="'"),
                  'Double Quote'),
-    textInput("dataCol", "Column containing data to test",value=2),
+    textInput("skip", "Number of rows to skip in data file before reading data",value=0),
+
     
     br(),    
+    h2("Analysis Parameters"),
+    textInput("dataCol", "Column containing data to test",value=2),
     textInput("mu","True mean",
-                value = 165),
+                value = 0),
     checkboxInput("showMu","Show true mean?", T),
     br(),
     radioButtons("alternative", "Alternative", c("Two-sided"="two.sided", "Greater" = "greater", "Lower"="less"),"two.sided"),
-    
-    h4("To do"),
-    helpText("Try changing the mean height of females,
-             Can you determine its effect on the Summary Statistics?")
+    #submitButton ('Generate R Code', icon('toggle-right'))
+    textInput("outfile", "What to call the output R script",value="analysis"),
+    textInput("name", "Your Name",value="Anon."),
+    textInput("title", "What title to use in the report",value="My R Analysis")
     ),
   
   mainPanel(
     tabsetPanel(
 #      tabPanel("Plot",plotOutput("plot")),
       tabPanel("The data", dataTableOutput("mytable")),
-      tabPanel("Boxplot",plotOutput("boxplot")),
-      tabPanel("Histogram",plotOutput("histogram")),
-      tabPanel("t test", h4("Screen output in R"),
-               plotOutput("zdist"),
-               verbatimTextOutput("ttest")),
-      tabPanel("Summary Statistics",
-               h4("Screen output in R"),
-               verbatimTextOutput("summary")),
-      tabPanel("Example  R code",
-               helpText("#Generate some data and place in a dataframe"),
-               helpText("X <- 1:100"),
-               helpText("Y <- 100 + 2*X + rnorm(100, sd=10)"),
-               helpText("mydata <- data.frame(X, Y)"),
+#      tabPanel("Boxplot",plotOutput("boxplot")),
+#      tabPanel("Histogram",plotOutput("histogram")),
+
+#      tabPanel("Summary Statistics",
+#               h4("Screen output in R"),
+#               verbatimTextOutput("summary")),
+tabPanel("Data Distribution", helpText("The boxplot and histogram of the data are shown below"),
+         plotOutput("boxplot"),
+         verbatimTextOutput("summary"),
+         helpText("The red solid line on the histogram shows a normal distribtion. You should assess whether your data are approximately normally-distributed before proceeding with a t-test"),
+         plotOutput("histogram")
+         ),
+tabPanel("t test", h4("Screen output in R"),
+         plotOutput("zdist"),
+         verbatimTextOutput("ttest")),
+      tabPanel("R code",
+               helpText("You will be able to re-run this analysis in R by downloading the R code below"),
+               h4("Code Preview"),
+               verbatimTextOutput("thecode"),
+               downloadLink('downloadScript', 'Download R Script'),
                br(),
-               helpText("#Fit regression model"),
-               helpText("model <- lm(Y ~ X, data=mydata)"),
+               downloadLink('downloadMarkdown', 'Download R Markdown'),
                br(),
-               helpText("#Summary statistics for the model"),
-               helpText("summary(model)"),
-               br(),
-               helpText("#Plot the data and add the regression line"),
-               helpText("plot(Y ~ X, data=mydata)"),
-               helpText("abline(model)")
-      )
+  #             downloadLink('downloadPDF', 'Download HTML Report')
+  helpText("We recommend RStudio to run the R code and compile reports"),
+  img(src="https://www.rstudio.com/wp-content/uploads/2014/03/blue-125.png"), br(),a("RStudio",href="https://www.rstudio.com/"),br(),
+  helpText("In order to compile the report in RStudio, you will need to install the ggplot2 and knitr packages"),br(),
+  code("install.packages(c('knitr','ggplot2'))")
+              )
     )
   )
   
