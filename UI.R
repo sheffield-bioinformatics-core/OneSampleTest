@@ -68,8 +68,8 @@ tabPanel("t test", h4("Screen output in R"),
   #             downloadLink('downloadPDF', 'Download HTML Report')
   helpText("We recommend RStudio to run the R code and compile reports"),
   img(src="https://www.rstudio.com/wp-content/uploads/2014/03/blue-125.png"), br(),a("RStudio",href="https://www.rstudio.com/"),br(),
-  helpText("In order to compile the report in RStudio, you will need to install the ggplot2 and knitr packages"),br(),
-  code("install.packages(c('knitr','ggplot2'))")
+  helpText("In order to compile the report in RStudio, you will need to install the ggplot2, rmarkdown and knitr packages"),br(),
+  code("install.packages(c('knitr','ggplot2','rmarkdown'))")
               )
     )
   )
