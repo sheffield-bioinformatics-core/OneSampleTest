@@ -9,7 +9,14 @@ shinyServer(function(input, output){
   data <- reactive({inFile <- input$file1
   
                     if (is.null(inFile))
-                    return(NULL)
+                    return(structure(list(Month = structure(c(5L, 4L, 8L, 1L, 9L, 7L, 6L, 
+                                                              2L, 12L, 11L, 10L, 3L), .Label = c("April", "August", "December", 
+                                                                                                 "February", "January", "July", "June", "March", "May", "November", 
+                                                                                                 "October", "Sept"), class = "factor"), Failure = c(2.9, 2.99, 
+                                                                                                                                                    2.48, 1.48, 2.71, 4.17, 3.74, 3.04, 1.23, 2.72, 3.23, 3.4)), .Names = c("Month", 
+                                                                                                                                                                                                                            "Failure"), class = "data.frame", row.names = c(NA, -12L)))
+  
+  
                     print(inFile$datapath)
                     read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote,skip=input$skip)
                     #read.csv("GraphPad Course Data/diseaseX.csv")
