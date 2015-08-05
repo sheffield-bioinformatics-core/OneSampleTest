@@ -17,7 +17,7 @@ shinyServer(function(input, output){
                                                                                                                                                                                                                             "Failure"), class = "data.frame", row.names = c(NA, -12L)))
   
   
-                    print(inFile$datapath)
+                    print(inFile$name)
                     read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote,skip=input$skip)
                     #read.csv("GraphPad Course Data/diseaseX.csv")
   })
@@ -175,17 +175,15 @@ output$downloadScript <- downloadHandler(
     paste(input$outfile, '.R', sep='')
   },
   content = function(file) {
-    #cat(file=file,as.name('myfile <- file.choose()\n'))
-    #cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
-    #cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
-    #cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
-    #cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
-    #cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
-    df <- dget("data.rda")
+    inFile <- input$file1
     
-    cat(file=file,as.name("data <-"))
-    cat(file=file,capture.output(dput(df)),append=TRUE)
-    cat(file=file,"\n",append=TRUE)
+    cat(file=file,as.name(paste0('myfile <- \"' , inFile$name, '\"\n')))
+    cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
+    cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
+    cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
+    cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
+    cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    
     cat(file=file,as.name("head(data)\n"),append=TRUE)
   
     cat(file=file,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
@@ -211,18 +209,14 @@ output$downloadMarkdown <- downloadHandler(
     paste(input$outfile, '.Rmd', sep='')
   },
   content = function(file) {
-    #cat(file=file,as.name('myfile <- file.choose()\n'))
-    #cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
-    #cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
-    #cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
-    #cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
-    #cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
-    script <- gsub(".Rmd",".R",file)
-    df <- dget("data.rda")
-    
-    cat(file=script,as.name("data <-"))
-    cat(file=script,capture.output(dput(df)),append=TRUE)
-    cat(file=script,"\n",append=TRUE)
+    inFile <- input$file1
+    script <- gsub(".Rmd", ".R",file)
+    cat(file=script,as.name(paste0('myfile <- \"' , inFile$name, '\"\n')))
+    cat(file=script,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
+    cat(file=script,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
+    cat(file=script,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
+    cat(file=script,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
+    cat(file=script,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
     cat(file=script,as.name("head(data)\n"),append=TRUE)
     
     cat(file=script,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
@@ -290,7 +284,10 @@ output$downloadPDF <- downloadHandler(
 
 output$thecode <- renderPrint({
   
-  print(as.name(paste('myfile <- file.choose()')))
+  inFile <- input$file1
+  
+  print(as.name(paste0('myfile <- \"' , inFile$name,'\"')))
+  
   print(as.name(paste0('sep <- \'', input$sep,'\'')))
   print(as.name(paste0('quote <- \'', input$quote,'\'')))
   print(as.name(paste('header <- ', input$header)))
