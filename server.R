@@ -248,40 +248,6 @@ output$downloadMarkdown <- downloadHandler(
 )
 
 
-output$downloadPDF <- downloadHandler(
-  filename = function(input) {
-    paste('mycode-', Sys.Date(), '.html', sep='')
-  },
-  content = function(file) {
-    #cat(file=file,as.name('myfile <- file.choose()\n'))
-    #cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
-    #cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
-    #cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
-    #cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
-    #cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
-    script <- gsub(".html",".R",file)
-    df <- dget("data.rda")
-    
-    cat(file=script,as.name("data <-"))
-    cat(file=script,capture.output(dput(df)),append=TRUE)
-    cat(file=script,"\n",append=TRUE)
-    cat(file=script,as.name("head(data)\n"),append=TRUE)
-    
-    cat(file=script,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
-    cat(file=script,as.name("X <- data[,datacol]\n"),append=TRUE)
-    cat(file=script,as.name("summary(X)\n"),append=TRUE)
-    cat(file=script,as.name("boxplot(X,horizontal=TRUE)\n"),append=TRUE)
-    cat(file=script,as.name("hist(X)\n"),append=TRUE)
-    cat(file=script,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
-    cat(file=script,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
-    cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
-    cat(file=script,as.name("sessionInfo()\n"),append=TRUE)
-    o <- knitr:::spin(hair=script,knit = FALSE)
-    knitr:::knit2html(o)
-    #    formatR::tidy_urce(file,output = file)
-  }
-)
-
 output$thecode <- renderPrint({
   
   inFile <- input$file1
