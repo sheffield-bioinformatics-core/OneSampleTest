@@ -46,7 +46,7 @@ shinyServer(function(input, output){
   output$mytable= renderDataTable({
     df <- data()
     df
-    dput(df, file="data.rda")
+#    dput(df, file="data.rda")
   }
   )
   
