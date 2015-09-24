@@ -177,12 +177,18 @@ output$downloadScript <- downloadHandler(
   content = function(file) {
     inFile <- input$file1
     
+    if (is.null(inFile)){
+      cat(file=file,as.name("data<-data.frame(Month=month.name,Failure=c(2.9,2.99,2.48,1.48,2.71,4.17,3.74,3.04,1.23,2.72,3.23,3.4))\n"))
+    }
+    
+    else {
     cat(file=file,as.name(paste0('myfile <- \"' , inFile$name, '\"\n')))
     cat(file=file,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
     cat(file=file,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
     cat(file=file,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
     cat(file=file,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
     cat(file=file,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    }
     
     cat(file=file,as.name("head(data)\n"),append=TRUE)
   
@@ -211,12 +217,20 @@ output$downloadMarkdown <- downloadHandler(
   content = function(file) {
     inFile <- input$file1
     script <- gsub(".Rmd", ".R",file)
-    cat(file=script,as.name(paste0('myfile <- \"' , inFile$name, '\"\n')))
-    cat(file=script,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
-    cat(file=script,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
-    cat(file=script,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
-    cat(file=script,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
-    cat(file=script,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    
+    if (is.null(inFile)){
+      cat(file=script,as.name("data<-data.frame(Month=month.name,Failure=c(2.9,2.99,2.48,1.48,2.71,4.17,3.74,3.04,1.23,2.72,3.23,3.4))\n"))
+    }
+    
+    else{
+    
+      cat(file=script,as.name(paste0('myfile <- \"' , inFile$name, '\"\n')))
+      cat(file=script,as.name(paste0('sep <- \'', input$sep,'\'','\n')),append=TRUE)
+      cat(file=script,as.name(paste0('quote <- \'', input$quote,'\'','\n')),append=TRUE)
+      cat(file=script,as.name(paste('header <- ', input$header,'\n')),append=TRUE)
+      cat(file=script,as.name(paste('skip <- ', input$skip,'\n')),append=TRUE)
+      cat(file=script,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
+    }
     cat(file=script,as.name("head(data)\n"),append=TRUE)
     
     cat(file=script,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
@@ -252,14 +266,19 @@ output$thecode <- renderPrint({
   
   inFile <- input$file1
   
-  print(as.name(paste0('myfile <- \"' , inFile$name,'\"')))
+  if (is.null(inFile)){
+    print(as.name("data<-data.frame(Month=month.name,Failure=c(2.9,2.99,2.48,1.48,2.71,4.17,3.74,3.04,1.23,2.72,3.23,3.4))\n"))
+  }
   
-  print(as.name(paste0('sep <- \'', input$sep,'\'')))
-  print(as.name(paste0('quote <- \'', input$quote,'\'')))
-  print(as.name(paste('header <- ', input$header)))
-  print(as.name(paste('skip <- ', input$skip)))
-  print(as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)"))
-  
+  else{
+    print(as.name(paste0('myfile <- \"' , inFile$name,'\"')))
+    
+    print(as.name(paste0('sep <- \'', input$sep,'\'')))
+    print(as.name(paste0('quote <- \'', input$quote,'\'')))
+    print(as.name(paste('header <- ', input$header)))
+    print(as.name(paste('skip <- ', input$skip)))
+    print(as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)"))
+  }
   #dump <- dput(data)
   #print(as.name(paste("data <-", capture.output(dput(data)))))
   print(as.name("head(data)"))
