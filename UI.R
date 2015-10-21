@@ -4,7 +4,7 @@ library(shiny)
 
 shinyUI(pageWithSidebar(
   
-  headerPanel("T-test Example"),
+  headerPanel("One-Sample Tests"),
   
   sidebarPanel(
     h2("Data Import Parameters"),
@@ -22,16 +22,19 @@ shinyUI(pageWithSidebar(
                    'Single Quote'="'"),
                  'Double Quote'),
     textInput("skip", "Number of rows to skip in data file before reading data",value=0),
-
+    textInput("dataCol", "Column containing data to test",value=2),
     
     br(),    
     h2("Analysis Parameters"),
-    textInput("dataCol", "Column containing data to test",value=2),
+    helpText("Use the histograms and boxplot to judge whether you need to use a parametric, or non-parametric test"),
+    checkboxInput("is.parametric",label = "Use Parametric Test?",value = TRUE),
     textInput("mu","True mean",
                 value = 0),
     checkboxInput("showMu","Show true mean?", T),
     br(),
     radioButtons("alternative", "Alternative", c("Two-sided"="two.sided", "Greater" = "greater", "Lower"="less"),"two.sided"),
+    br(),    
+    h2("Analysis Parameters"),
     #submitButton ('Generate R Code', icon('toggle-right'))
     textInput("outfile", "What to call the output R script",value="analysis"),
     textInput("name", "Your Name",value="Anon."),
