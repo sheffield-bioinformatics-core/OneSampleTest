@@ -210,7 +210,10 @@ output$downloadScript <- downloadHandler(
     
     cat(file=file,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
     cat(file=file,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
-    cat(file=file,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    if(input$do.parametric){
+      cat(file=file,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    } else cat(file=file,as.name("wilcox.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    
     cat(file=file,as.name("sessionInfo()\n"),append=TRUE)
     #formatR::tidy_source(source=file,output = file)
   }
@@ -250,7 +253,10 @@ output$downloadMarkdown <- downloadHandler(
     
     cat(file=script,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
     cat(file=script,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
-    cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    if(input$do.parametric){
+      cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    } else cat(file=script,as.name("wilcox.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
+    
     cat(file=script,as.name("sessionInfo()\n"),append=TRUE)
     knitr:::spin(hair=script,knit = FALSE)
     rmd <- readLines(file)
@@ -302,7 +308,10 @@ output$thecode <- renderPrint({
   
   print(as.name(paste0('alternative <- \'', input$alternative,'\'')))
   print(as.name(paste("mu <- ", input$mu)))
-  print(as.name("t.test(X,mu=mu,alternative=alternative)"))
+  if(input$do.parametric){
+    print(as.name("t.test(X,mu=mu,alternative=alternative)"))
+  } else print(as.name("wilcox.test(X,mu=mu,alternative=alternative)"))
+  
   print(as.name("sessionInfo()"))
 }
 )
