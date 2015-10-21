@@ -116,7 +116,7 @@ shinyServer(function(input, output){
     X <- df[,datacol]
     alternative = input$alternative
     mu <- as.numeric(input$mu)
-    if(input$is.parametric) t.test(X,mu=mu,alternative=alternative)
+    if(input$do.parametric) t.test(X,mu=mu,alternative=alternative)
     else wilcox.test(X,mu=mu,alternative=alternative)
     
   })
@@ -135,7 +135,7 @@ shinyServer(function(input, output){
 
   output$zdist <- reactivePlot(function(){
   
-    if(input$is.parametric){
+    if(input$do.parametric){
       mu <- as.numeric(input$mu)
       alternative = input$alternative
       mu <- as.numeric(input$mu)

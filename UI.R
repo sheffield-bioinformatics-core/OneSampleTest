@@ -27,7 +27,7 @@ shinyUI(pageWithSidebar(
     br(),    
     h2("Analysis Parameters"),
     helpText("Use the histograms and boxplot to judge whether you need to use a parametric, or non-parametric test"),
-    checkboxInput("is.parametric",label = "Use Parametric Test?",value = TRUE),
+    checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
     textInput("mu","True mean",
                 value = 0),
     checkboxInput("showMu","Show true mean?", T),
