@@ -68,7 +68,8 @@ shinyServer(function(input, output){
   df <- data()
   datacol <- as.numeric(input$dataCol)
   
-  datacol <- as.numeric(input$dataCol)
+
+  mu <- as.numeric(input$mu)
   
   if(!input$transform =="none"){
     
@@ -77,10 +78,16 @@ shinyServer(function(input, output){
                            log.10 = log10(df[,datacol]),
                            log = log(df[,datacol])
     )
+    
+    mu <- switch(mu,
+                 log.2 = log2(mu),
+                 log.10 = log10(mu),
+                 log = log(mu)
+    )
   }
   
   
-  mu <- as.numeric(input$mu)
+
                    
   if(input$showMu){ xlim <-c(min(mu, min(df[,datacol])), max(mu, max(df[,datacol])))
   } else xlim <- c(min(df[,datacol]), max(df[,datacol]))
@@ -112,6 +119,7 @@ shinyServer(function(input, output){
     datacol <- as.numeric(input$dataCol)
     
 
+    mu <- as.numeric(input$mu)
     
     if(!input$transform =="none"){
       
@@ -120,10 +128,17 @@ shinyServer(function(input, output){
                              log.10 = log10(df[,datacol]),
                              log = log(df[,datacol])
       )
+      
+      mu <- switch(mu,
+                   log.2 = log2(mu),
+                   log.10 = log10(mu),
+                   log = log(mu)
+      )
+      
     }
     
     
-    mu <- as.numeric(input$mu)
+
     
     if(input$showMu){ xlim <-c(min(mu, min(df[,datacol])), max(mu, max(df[,datacol])))
     } else xlim <- c(min(df[,datacol]), max(df[,datacol]))
@@ -147,7 +162,10 @@ shinyServer(function(input, output){
   
   output$ttest <-renderPrint({
     df <- data()
+    
     datacol <- as.numeric(input$dataCol)
+    
+    mu <- as.numeric(input$mu)
     
     if(!input$transform =="none"){
       
@@ -156,11 +174,17 @@ shinyServer(function(input, output){
                              log.10 = log10(df[,datacol]),
                              log = log(df[,datacol])
       )
+      
+      mu <- switch(mu,
+                   log.2 = log2(mu),
+                   log.10 = log10(mu),
+                   log = log(mu)
+      )
     }
     
     X <- df[,datacol]
     alternative = input$alternative
-    mu <- as.numeric(input$mu)
+    
     if(input$do.parametric) t.test(X,mu=mu,alternative=alternative)
     else wilcox.test(X,mu=mu,alternative=alternative)
     
@@ -197,6 +221,23 @@ shinyServer(function(input, output){
      
       df <- data()
       datacol <- as.numeric(input$dataCol)
+      
+      if(!input$transform =="none"){
+        
+        df[,datacol] <- switch(input$transform,
+                               log.2 = log2(df[,datacol]),
+                               log.10 = log10(df[,datacol]),
+                               log = log(df[,datacol])
+        )
+        
+        mu <- switch(mu,
+                     log.2 = log2(mu),
+                     log.10 = log10(mu),
+                     log = log(mu)
+        )
+      }
+      
+      
       degfree <- nrow(df)-1
       X <- df[,datacol]
       tstat <- t.test(X,mu=mu,alternative=alternative)$statistic
@@ -253,8 +294,13 @@ output$downloadScript <- downloadHandler(
     }
     
     cat(file=file,as.name("head(data)\n"),append=TRUE)
+    cat(file=file,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
   
     cat(file=file,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
+    cat(file=file,as.name(paste0('transform <- \'', input$transform,'\'','\n')),append=TRUE)
+    cat(file=file,as.name("if(transform != 'none') df[,datacol] <- switch(transform,log.2 = log2(df[,datacol]),log.10 = log10(df[,datacol]),log = log(df[,datacol]))\n"),append=TRUE)
+    cat(file=file,as.name("if(transform != 'none') mu <- switch(transform,log.2 = log2(mu),log.10 = log10(mu),log = log(mu))\n"),append=TRUE)  
+    
     cat(file=file,as.name("X <- data[,datacol]\n"),append=TRUE)
     cat(file=file,as.name("summary(X)\n"),append=TRUE)
     cat(file=file,as.name("boxplot(X,horizontal=TRUE)\n"),append=TRUE)
@@ -264,7 +310,7 @@ output$downloadScript <- downloadHandler(
     cat(file=file, as.name("ggplot(data, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=.5,colour='black', fill='white')+ stat_function(fun=dnorm,color='red',arg=list(mean=mean(data$X), sd=sd(data$X)))\n"),append=TRUE)
     
     cat(file=file,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
-    cat(file=file,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
+
     if(input$do.parametric){
       cat(file=file,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
     } else cat(file=file,as.name("wilcox.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
@@ -297,9 +343,14 @@ output$downloadMarkdown <- downloadHandler(
       cat(file=script,as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)\n"),append=TRUE)
     }
     cat(file=script,as.name("head(data)\n"),append=TRUE)
+    cat(file=script,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
     
     cat(file=script,as.name(paste("datacol <- ", input$dataCol,'\n')),append=TRUE)
     cat(file=script,as.name("X <- data[,datacol]\n"),append=TRUE)
+    cat(file=script,as.name(paste0('transform <- \'', input$transform,'\'','\n')),append=TRUE)
+    cat(file=script,as.name("if(transform != 'none') df[,datacol] <- switch(transform,log.2 = log2(df[,datacol]),log.10 = log10(df[,datacol]),log = log(df[,datacol]))\n"),append=TRUE)
+    cat(file=script,as.name("if(transform != 'none') mu <- switch(transform,log.2 = log2(mu),log.10 = log10(mu),log = log(mu))\n"),append=TRUE)  
+    
     cat(file=script,as.name("summary(X)\n"),append=TRUE)
     cat(file=script,as.name("boxplot(X,horizontal=TRUE)\n"),append=TRUE)
     cat(file=script,as.name("colnames(data)[datacol] <- 'X'\n"),append=TRUE)
@@ -307,7 +358,7 @@ output$downloadMarkdown <- downloadHandler(
     cat(file=script, as.name("ggplot(data, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=.5,colour='black', fill='white')+ stat_function(fun=dnorm,color='red',arg=list(mean=mean(data$X), sd=sd(data$X)))\n"),append=TRUE)
     
     cat(file=script,as.name(paste0('alternative <- \'', input$alternative,'\'','\n')),append=TRUE)
-    cat(file=script,as.name(paste("mu <- ", input$mu,'\n')),append=TRUE)
+    
     if(input$do.parametric){
       cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
     } else cat(file=script,as.name("wilcox.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
