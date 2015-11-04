@@ -2,7 +2,7 @@ library(shiny)
 library(ggplot2)
 library(reshape2)
 library(gridExtra)
-
+library(RcmdrMisc)
 
 shinyServer(function(input, output){
   
@@ -45,6 +45,17 @@ shinyServer(function(input, output){
   
   output$mytable= renderDataTable({
     df <- data()
+    datacol <- as.numeric(input$dataCol)
+    
+    if(!input$transform =="none"){
+      
+      df[,datacol] <- switch(input$transform,
+                   log.2 = log2(df[,datacol]),
+                   log.10 = log10(df[,datacol]),
+                   log = log(df[,datacol])
+                   )
+    }
+    
     df
 #    dput(df, file="data.rda")
   }
@@ -56,6 +67,18 @@ shinyServer(function(input, output){
     
   df <- data()
   datacol <- as.numeric(input$dataCol)
+  
+  datacol <- as.numeric(input$dataCol)
+  
+  if(!input$transform =="none"){
+    
+    df[,datacol] <- switch(input$transform,
+                           log.2 = log2(df[,datacol]),
+                           log.10 = log10(df[,datacol]),
+                           log = log(df[,datacol])
+    )
+  }
+  
   
   mu <- as.numeric(input$mu)
                    
@@ -88,6 +111,18 @@ shinyServer(function(input, output){
     df <- data()
     datacol <- as.numeric(input$dataCol)
     
+
+    
+    if(!input$transform =="none"){
+      
+      df[,datacol] <- switch(input$transform,
+                             log.2 = log2(df[,datacol]),
+                             log.10 = log10(df[,datacol]),
+                             log = log(df[,datacol])
+      )
+    }
+    
+    
     mu <- as.numeric(input$mu)
     
     if(input$showMu){ xlim <-c(min(mu, min(df[,datacol])), max(mu, max(df[,datacol])))
@@ -113,6 +148,16 @@ shinyServer(function(input, output){
   output$ttest <-renderPrint({
     df <- data()
     datacol <- as.numeric(input$dataCol)
+    
+    if(!input$transform =="none"){
+      
+      df[,datacol] <- switch(input$transform,
+                             log.2 = log2(df[,datacol]),
+                             log.10 = log10(df[,datacol]),
+                             log = log(df[,datacol])
+      )
+    }
+    
     X <- df[,datacol]
     alternative = input$alternative
     mu <- as.numeric(input$mu)
@@ -124,9 +169,19 @@ shinyServer(function(input, output){
   
 
   output$summary <- renderPrint({
+    df <- data()
     datacol <- as.numeric(input$dataCol)
     
-    summary(data()[,datacol])
+    if(!input$transform =="none"){
+      
+      df[,datacol] <- switch(input$transform,
+                             log.2 = log2(df[,datacol]),
+                             log.10 = log10(df[,datacol]),
+                             log = log(df[,datacol])
+      )
+    }
+    
+    RcmdrMisc::numSummary(df[,datacol])
   })
   
 
