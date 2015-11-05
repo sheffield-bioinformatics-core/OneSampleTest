@@ -239,7 +239,7 @@ shinyServer(function(input, output){
 
   output$zdist <- reactivePlot(function(){
   
-    if(input$do.parametric){
+
       mu <- as.numeric(input$mu)
       alternative = input$alternative
       mu <- as.numeric(input$mu)
@@ -270,30 +270,62 @@ shinyServer(function(input, output){
   
       alternative = input$alternative
       
-      df <- data.frame(ts = rt(10000,df=degfree))
-  
+      if(input$do.parametric){
       
-      p<- ggplot(df, aes(x=ts)) + 
-        geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
-                       binwidth=.5,
-                       colour="black", fill="white") +
-        geom_density()
+        df <- data.frame(ts = rt(10000,df=degfree))
+    
+        
+        p<- ggplot(df, aes(x=ts)) + 
+          geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                         binwidth=.5,
+                         colour="black", fill="white") +
+          geom_density()
+        
+        xlim <- c(min(tstat-0.2,min(df$ts)), max(tstat+0.2, max(df$ts)))
+        
+        critvals <- c(qt(0.05, degfree),qt(0.95,degfree))
+        rect1 <- data.frame(xmin = min(critvals[1],xlim),xmax = critvals[1], ymin=-Inf,ymax=Inf)
+        rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
+        
+       p <- switch(alternative,
+        "two.sided" = p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE),
+        "greater" = p + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE),
+        "less" =  p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE)
+       )   
+        p <- p + geom_vline(xintercept = tstat,lty=2,col="red") + xlim(xlim)
+        
+      }
       
-      xlim <- c(min(tstat-0.2,min(df$ts)), max(tstat+0.2, max(df$ts)))
-      
-      critvals <- c(qt(0.05, degfree),qt(0.95,degfree))
-      rect1 <- data.frame(xmin = min(critvals[1],xlim),xmax = critvals[1], ymin=-Inf,ymax=Inf)
-      rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
-      
-     p <- switch(alternative,
-      "two.sided" = p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE),
-      "greater" = p + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE),
-      "less" =  p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE)
-     )   
-      p <- p + geom_vline(xintercept = tstat,lty=2,col="red") + xlim(xlim)
+      else {
+    
+        
+        npos <- sum(X>mu)
+        nneg <- sum(X<mu)
+        x <- min(npos,nneg)
+        n <- sum(X != mu)
+        
+        df <- data.frame(ts = rbinom(10000,size=n,prob=0.5))
+        
+        p<- ggplot(df, aes(x=ts)) + 
+          geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                         binwidth=.5,
+                         colour="black", fill="white") +
+          geom_density()
+        
+        xlim <- c(min(x-0.2,min(df$ts)), max(x+0.2, max(df$ts)))
+        
+        critvals <- c(qbinom(0.05, size=n,prob=0.5),qbinom(0.95,size=n,prob=0.5))
+        rect1 <- data.frame(xmin = min(critvals[1],xlim),xmax = critvals[1], ymin=-Inf,ymax=Inf)
+        rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
+        
+        p <- p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE)
+        
+        p <- p + geom_vline(xintercept = x,lty=2,col="red") + xlim(xlim)
+        
+      }
       print(p)
       
-    }
+    
     
     
   })

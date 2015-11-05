@@ -61,7 +61,7 @@ tabPanel("Data Distribution", helpText("The boxplot and histogram of the data ar
          plotOutput("histogram")
          ),
 tabPanel("Test Result", h4("Screen output in R"),
-         verbatimTextOutput("ttest"),helpText("If you have chosen a Parametric test, the comparison of the calculated test-statistic to the reference distribution will be shown here"),plotOutput("zdist")),
+         verbatimTextOutput("ttest"),plotOutput("zdist")),
 tabPanel("Reproducible Analysis",
          h4("R Script"),
          
