@@ -209,9 +209,9 @@ shinyServer(function(input, output){
       n <- sum(X != mu)
       cat(paste("Number of +'s", npos,"\n"))
       cat(paste("Number of -'s", nneg,"\n"))
-      
-      pbinom(q = x, size = n,prob = 0.5)*2
-      
+      cat(paste("Test statistic:", x,"\n"))
+      pv <- round(pbinom(q = x, size = n,prob = 0.5)*2,3)
+      cat(paste("P-value using binomial distribution with",n, "trials and p=0.5:",pv,"\n"))
     }
   })
 
