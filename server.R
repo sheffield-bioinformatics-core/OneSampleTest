@@ -148,7 +148,7 @@ shinyServer(function(input, output){
     df$tmp <- factor(rep("x", nrow(df)))
     
     p<- ggplot(df, aes(x=tmp,y=X)) + xlab("") + 
-      geom_boxplot() + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + coord_flip()
+      geom_boxplot() + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_point() + coord_flip()
     
     p
     
