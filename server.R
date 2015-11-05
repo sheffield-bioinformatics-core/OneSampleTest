@@ -3,7 +3,7 @@ library(ggplot2)
 library(reshape2)
 library(gridExtra)
 library(RcmdrMisc)
-
+library(knitr)
 shinyServer(function(input, output){
   
   data <- reactive({inFile <- input$file1
@@ -54,6 +54,15 @@ shinyServer(function(input, output){
                    log.10 = log10(df[,datacol]),
                    log = log(df[,datacol])
                    )
+    }
+    
+    mu <- as.numeric(input$mu)
+    
+    if(!input$do.parametric){
+        
+      df$Sign <- "="
+      df$Sign[df[,datacol] > mu] <- "+"
+      df$Sign[df[,datacol] < mu] <- "-"
     }
     
     df
@@ -148,7 +157,7 @@ shinyServer(function(input, output){
     df$tmp <- factor(rep("x", nrow(df)))
     
     p<- ggplot(df, aes(x=tmp,y=X)) + xlab("") + 
-      geom_boxplot() + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_point() + coord_flip()
+      geom_boxplot() + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
     
     p
     
@@ -186,8 +195,24 @@ shinyServer(function(input, output){
     alternative = input$alternative
     
     if(input$do.parametric) t.test(X,mu=mu,alternative=alternative)
-    else wilcox.test(X,mu=mu,alternative=alternative)
     
+    else {
+      cat("Using a sign test.....\n")
+      df <- data.frame(X)
+      df$Sign <- "="
+      df$Sign[X > mu] <- "+"
+      df$Sign[X < mu] <- "-"
+
+      npos <- sum(X>mu)
+      nneg <- sum(X<mu)
+      x <- min(npos,nneg)
+      n <- sum(X != mu)
+      cat(paste("Number of +'s", npos,"\n"))
+      cat(paste("Number of -'s", nneg,"\n"))
+      
+      pbinom(q = x, size = n,prob = 0.5)*2
+      
+    }
   })
 
   
