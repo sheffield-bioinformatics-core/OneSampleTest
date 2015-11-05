@@ -309,8 +309,7 @@ shinyServer(function(input, output){
         p<- ggplot(df, aes(x=ts)) + 
           geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
                          binwidth=.5,
-                         colour="black", fill="white") +
-          geom_density()
+                         colour="black", fill="white") 
         
         xlim <- c(min(x-0.2,min(df$ts)), max(x+0.2, max(df$ts)))
         
