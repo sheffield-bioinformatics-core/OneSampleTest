@@ -437,47 +437,6 @@ output$downloadMarkdown <- downloadHandler(
 )
 
 
-output$thecode <- renderPrint({
-  
-  inFile <- input$file1
-  
-  if (is.null(inFile)){
-    print(as.name("data<-data.frame(Month=month.name,Failure=c(2.9,2.99,2.48,1.48,2.71,4.17,3.74,3.04,1.23,2.72,3.23,3.4))\n"))
-  }
-  
-  else{
-    print(as.name(paste0('myfile <- \"' , inFile$name,'\"')))
-    
-    print(as.name(paste0('sep <- \'', input$sep,'\'')))
-    print(as.name(paste0('quote <- \'', input$quote,'\'')))
-    print(as.name(paste('header <- ', input$header)))
-    print(as.name(paste('skip <- ', input$skip)))
-    print(as.name("data <- read.csv(myfile, header=header, sep=sep, quote=quote,skip=skip)"))
-  }
-  #dump <- dput(data)
-  #print(as.name(paste("data <-", capture.output(dput(data)))))
-  print(as.name("head(data)"))
-  
-  print(as.name(paste("datacol <- ", input$dataCol)))
-  print(as.name("X <- data[,datacol]"))
-  print(as.name("summary(X)"))
-  print(as.name("boxplot(X,horizontal=TRUE)"))
-  
-  print(as.name("colnames(data)[datacol] <- 'X'"))
-  print(as.name("library(ggplot2)"))
-  print(as.name("ggplot(data, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=.5,colour='black', fill='white')+ stat_function(fun=dnorm,color='red',arg=list(mean=mean(data$X), sd=sd(data$X)))"))
-  
-  
-  print(as.name(paste0('alternative <- \'', input$alternative,'\'')))
-  print(as.name(paste("mu <- ", input$mu)))
-  if(input$do.parametric){
-    print(as.name("t.test(X,mu=mu,alternative=alternative)"))
-  } else print(as.name("wilcox.test(X,mu=mu,alternative=alternative)"))
-  
-  print(as.name("sessionInfo()"))
-}
-)
-  
   
 }
 )
