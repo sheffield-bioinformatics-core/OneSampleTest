@@ -105,9 +105,7 @@ shinyServer(function(input, output){
   colnames(df)[datacol] <- "X"
   
   p<- ggplot(df, aes(x=X)) + 
-    geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
-                   binwidth=.5,
-                   colour="black", fill="white") + ylab("") + xlim(xlim)
+    geom_histogram(aes(y=..density..),colour="black", fill="white") + ylab("") + xlim(xlim)
 
   p <- p + stat_function(fun=dnorm,
                            color="red",
