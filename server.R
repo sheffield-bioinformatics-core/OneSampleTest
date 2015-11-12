@@ -372,8 +372,18 @@ output$downloadScript <- downloadHandler(
 
     if(input$do.parametric){
       cat(file=file,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
-    } else cat(file=file,as.name("wilcox.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
-    
+    } else {
+      cat(file=file,as.name("df <- data.frame(X)\n"),append=TRUE)
+      cat(file=file,as.name("df$Sign <- '='\n"),append=TRUE)
+      cat(file=file,as.name("df$Sign[X > mu] <- '+'\n"),append=TRUE)
+      cat(file=file,as.name("df$Sign[X < mu] <- '-'\n"),append=TRUE)
+      cat(file=file,as.name("npos <- sum(X>mu)\n"),append=TRUE)
+      cat(file=file,as.name("nneg <- sum(X<mu)\n"),append=TRUE)
+      cat(file=file,as.name("x <- min(npos,nneg)\n"),append=TRUE)
+      cat(file=file,as.name("n <- sum(X != mu)\n"),append=TRUE)
+      cat(file=file,as.name("pv <- round(pbinom(q = x, size = n,prob = 0.5)*2,3)\n"),append=TRUE)
+      cat(file=file,as.name("pv\n"),append=TRUE)
+    }
     cat(file=file,as.name("sessionInfo()\n"),append=TRUE)
     #formatR::tidy_source(source=file,output = file)
   }
@@ -420,8 +430,18 @@ output$downloadMarkdown <- downloadHandler(
     
     if(input$do.parametric){
       cat(file=script,as.name("t.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
-    } else cat(file=script,as.name("wilcox.test(X,mu=mu,alternative=alternative)\n"),append=TRUE)
-    
+    } else {
+      cat(file=script,as.name("df <- data.frame(X)\n"),append=TRUE)
+      cat(file=script,as.name("df$Sign <- '='\n"),append=TRUE)
+      cat(file=script,as.name("df$Sign[X > mu] <- '+'\n"),append=TRUE)
+      cat(file=script,as.name("df$Sign[X < mu] <- '-'\n"),append=TRUE)
+      cat(file=script,as.name("npos <- sum(X>mu)\n"),append=TRUE)
+      cat(file=script,as.name("nneg <- sum(X<mu)\n"),append=TRUE)
+      cat(file=script,as.name("x <- min(npos,nneg)\n"),append=TRUE)
+      cat(file=script,as.name("n <- sum(X != mu)\n"),append=TRUE)
+      cat(file=script,as.name("pv <- round(pbinom(q = x, size = n,prob = 0.5)*2,3)\n"),append=TRUE)
+      cat(file=script,as.name("pv\n"),append=TRUE)
+    }
     cat(file=script,as.name("sessionInfo()\n"),append=TRUE)
     knitr:::spin(hair=script,knit = FALSE)
     rmd <- readLines(file)
