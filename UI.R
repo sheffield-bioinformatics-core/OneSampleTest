@@ -26,6 +26,13 @@ shinyUI(pageWithSidebar(
     
     br(),    
     h2("Analysis Parameters"),
+    checkboxInput("default.bins",label="Use Default Histogram Bin Width",value=TRUE),
+    sliderInput("bins",
+                "Number of bins:",
+                min = 1,
+                max = 50,
+                value = 30),
+    
     helpText("Use the histograms and boxplot to judge whether you need to use a parametric, or non-parametric test"),
     checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
     helpText("Alternatively, you could choose to transform the data prior to statistical testing..."),

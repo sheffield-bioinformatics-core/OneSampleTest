@@ -103,10 +103,15 @@ shinyServer(function(input, output){
   
    
   colnames(df)[datacol] <- "X"
-  
+  if(input$default.bins){
   p<- ggplot(df, aes(x=X)) + 
     geom_histogram(aes(y=..density..),colour="black", fill="white") + ylab("") + xlim(xlim)
-
+  }
+  else {
+    binwid <- (max(df$X)-min(df$X)) / input$bins
+    print(binwid)
+    p<- ggplot(df, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=binwid,colour="black", fill="white") + ylab("") + xlim(xlim)
+  }
   p <- p + stat_function(fun=dnorm,
                            color="red",
                            arg=list(mean=mean(df$X), 
