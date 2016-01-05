@@ -62,7 +62,7 @@ shinyUI(pageWithSidebar(
                img(src="cruk-cambridge-institute.jpg",width=350,height=77), br(),a("cruk.cam.ac.uk",href="www.cruk.cam.ac.uk"),
                br(),
                br(),
-               a("View source Code for app", href="https://github.com/bioinformatics-core-shared-training/TwoSampleTest.git")),
+               a("View source Code for app", href="https://github.com/bioinformatics-core-shared-training/OneSampleTest.git")),
       tabPanel("The data", dataTableOutput("mytable")),
 #      tabPanel("Boxplot",plotOutput("boxplot")),
 #      tabPanel("Histogram",plotOutput("histogram")),
