@@ -53,6 +53,16 @@ shinyUI(pageWithSidebar(
   mainPanel(
     tabsetPanel(
 #      tabPanel("Plot",plotOutput("plot")),
+      tabPanel("About",helpText("This app was developed by the Bioinformatics Core of Cancer Research Uk Cambridge Institute to accompany the training course"),
+               a("Introduction to Statistical Analysis",href="http://bioinformatics-core-shared-training.github.io/IntroductionToStats/"),
+               br(),
+               helpText("On the course webpage you will find lecture notes from the course and practical exercises that use this app"),
+               br(),
+               br(),
+               img(src="cruk-cambridge-institute.jpg",width=350,height=77), br(),a("cruk.cam.ac.uk",href="www.cruk.cam.ac.uk"),
+               br(),
+               br(),
+               a("View source Code for app", href="https://github.com/bioinformatics-core-shared-training/OneSampleTest.git")),
       tabPanel("The data", dataTableOutput("mytable")),
 #      tabPanel("Boxplot",plotOutput("boxplot")),
 #      tabPanel("Histogram",plotOutput("histogram")),
