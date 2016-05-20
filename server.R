@@ -72,7 +72,7 @@ shinyServer(function(input, output){
   
 
   
-  output$histogram<- reactivePlot(function(){
+  output$histogram<- renderPlot({
     
   df <- data()
   datacol <- as.numeric(input$dataCol)
@@ -112,25 +112,20 @@ shinyServer(function(input, output){
     print(binwid)
     p<- ggplot(df, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=binwid,colour="black", fill="white") + ylab("") + xlim(xlim)
   }
-  p <- p + stat_function(fun=dnorm,
-                           color="red",
-                           arg=list(mean=mean(df$X), 
-                                    sd=sd(df$X)))
-  
-  p
+  p <- p +  stat_function(fun=dnorm,col="red",args=list(mean=mean(df$X), sd=sd(df$X)))
+
   
   if(input$showMu) p <- p + geom_vline(xintercept = mu,lty=2,col="red")
+  cat("About to show the histogram")
   print(p)
 
   }
   )
   
-  output$boxplot<- reactivePlot(function(){
-    
+  output$boxplot <- renderPlot({
     df <- data()
     datacol <- as.numeric(input$dataCol)
     
-
     mu <- as.numeric(input$mu)
     
     if(!input$transform =="none"){
@@ -150,25 +145,60 @@ shinyServer(function(input, output){
     }
     
     
-
-    
     if(input$showMu){ xlim <-c(min(mu, min(df[,datacol])), max(mu, max(df[,datacol])))
     } else xlim <- c(min(df[,datacol]), max(df[,datacol]))
-    
     
     colnames(df)[datacol] <- "X"
     df$tmp <- factor(rep("x", nrow(df)))
     
-    p<- ggplot(df, aes(x=tmp,y=X)) + xlab("") + 
-      geom_boxplot() + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
-    
-    p
-    
-##    if(input$showMu) p <- p + geom_vline(xintercept = mu,lty=2,col="red")
- #   print(p)
-    
+    p<- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot()
+    p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
+    print(p)
+    cat("Made the boxplot")
   }
+  
   )
+ # output$boxplot_old<- reactivePlot(function(){
+#    
+#    df <- data()
+#    datacol <- as.numeric(input$dataCol)
+    
+
+#    mu <- as.numeric(input$mu)
+    
+#    if(!input$transform =="none"){
+      
+#      df[,datacol] <- switch(input$transform,
+#                             log.2 = log2(df[,datacol]),
+#                             log.10 = log10(df[,datacol]),
+#                             log = log(df[,datacol])
+#      )
+      
+#      mu <- switch(mu,
+#                   log.2 = log2(mu),
+#                   log.10 = log10(mu),
+#                   log = log(mu)
+#      )
+#      
+#    }
+    
+  
+#    if(input$showMu){ xlim <-c(min(mu, min(df[,datacol])), max(mu, max(df[,datacol])))
+#    } else xlim <- c(min(df[,datacol]), max(df[,datacol]))
+    
+    
+#    colnames(df)[datacol] <- "X"
+#    df$tmp <- factor(rep("x", nrow(df)))
+    
+#    p<- ggplot(df, aes(x=tmp,y=X)) + xlab("") +       geom_boxplot()
+#    geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
+#    p
+    
+#    if(input$showMu) p <- p + geom_vline(xintercept = mu,lty=2,col="red")
+#    print(p)
+    
+#  }
+#  )
   
 
   
@@ -240,7 +270,7 @@ shinyServer(function(input, output){
 
 
 
-  output$zdist <- reactivePlot(function(){
+  output$zdist <- renderPlot({
   
 
       mu <- as.numeric(input$mu)
@@ -281,9 +311,8 @@ shinyServer(function(input, output){
         p<- ggplot(df, aes(x=ts)) + 
           geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
                          binwidth=.5,
-                         colour="black", fill="white") +
-          geom_density()
-        
+                         colour="black", fill="white") + stat_function(fun=dnorm,col="red",args=list(mean=mean(df$ts), sd=sd(df$ts)))
+    
         xlim <- c(min(tstat-0.2,min(df$ts)), max(tstat+0.2, max(df$ts)))
         
         critvals <- c(qt(0.05, degfree),qt(0.95,degfree))
