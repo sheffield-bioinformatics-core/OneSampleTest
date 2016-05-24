@@ -2,7 +2,6 @@ library(shiny)
 library(ggplot2)
 library(reshape2)
 library(gridExtra)
-library(RcmdrMisc)
 library(knitr)
 shinyServer(function(input, output){
   
@@ -262,8 +261,9 @@ shinyServer(function(input, output){
                              log = log(df[,datacol])
       )
     }
-    
-    RcmdrMisc::numSummary(df[,datacol])
+    qs <- quantile(df[,datacol])
+    df <- data.frame(mean = mean(na.omit(df[,datacol])), sd = sd(na.omit(df[,datacol])), IQR = IQR(na.omit(df[,datacol])), NAs = sum(is.na(df[,datacol])), n=sum(!is.na(df[,datacol])))
+    round(unlist(c(df,qs)),2)
   })
   
 
