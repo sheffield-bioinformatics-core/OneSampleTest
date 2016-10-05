@@ -150,11 +150,11 @@ shinyServer(function(input, output){
     df$tmp <- factor(rep("x", nrow(df)))
     
     if(!input$violin){
-      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255))
+      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255),alpha=0.5)
       p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
       
     } else{
-      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_violin(fill=rgb(29,0,150,maxColorValue=255),alpha=0.3) + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255),width=0.1)
+      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_violin(fill=rgb(236,0,140,maxColorValue = 255),alpha=0.5) + geom_boxplot(fill="white",width=0.1)
       p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
       
     }
