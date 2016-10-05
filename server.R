@@ -6,14 +6,10 @@ library(knitr)
 shinyServer(function(input, output){
   
   data <- reactive({inFile <- input$file1
-  
+                      
+                    df <- data.frame(Month= month.name, Failure = c(2.9,2.99,2.48,1.48,2.71,4.17,3.74,3.04,1.23,2.72,3.23,3.4))
                     if (is.null(inFile))
-                    return(structure(list(Month = structure(c(5L, 4L, 8L, 1L, 9L, 7L, 6L, 
-                                                              2L, 12L, 11L, 10L, 3L), .Label = c("April", "August", "December", 
-                                                                                                 "February", "January", "July", "June", "March", "May", "November", 
-                                                                                                 "October", "Sept"), class = "factor"), Failure = c(2.9, 2.99, 
-                                                                                                                                                    2.48, 1.48, 2.71, 4.17, 3.74, 3.04, 1.23, 2.72, 3.23, 3.4)), .Names = c("Month", 
-                                                                                                                                                                                                                            "Failure"), class = "data.frame", row.names = c(NA, -12L)))
+                    return(df)
   
   
                     print(inFile$name)
@@ -103,19 +99,22 @@ shinyServer(function(input, output){
    
   colnames(df)[datacol] <- "X"
   if(input$default.bins){
-  p<- ggplot(df, aes(x=X)) + 
-    geom_histogram(aes(y=..density..),colour="black", fill=rgb(29,0,150,maxColorValue=255)) + ylab("") + xlim(xlim)
+    brx <- pretty(range(df$X), 
+                  n = nclass.Sturges(df$X),min.n = 1)
+    
+  p <- ggplot(df, aes(x=X)) + geom_histogram(breaks=brx,colour="black", fill=rgb(29,0,150,maxColorValue=255)) + ylab("") + xlim(xlim)
   }
+  
   else {
     binwid <- (max(df$X)-min(df$X)) / input$bins
     print(binwid)
-    p<- ggplot(df, aes(x=X)) + geom_histogram(aes(y=..density..),binwidth=binwid,colour="black", fill=rgb(29,0,150,maxColorValue=255)) + ylab("") + xlim(xlim)
+    p<- ggplot(df, aes(x=X)) + geom_histogram(binwidth=binwid,colour="black", fill=rgb(29,0,150,maxColorValue=255)) + ylab("") + xlim(xlim)
   }
-  p <- p +  stat_function(fun=dnorm,col="red",args=list(mean=mean(df$X), sd=sd(df$X)))
+#  p <- p +  stat_function(fun=dnorm,col="red",args=list(mean=mean(df$X), sd=sd(df$X)))
 
   
   if(input$showMu) p <- p + geom_vline(xintercept = mu,lty=2,col="red")
-  cat("About to show the histogram")
+
   print(p)
 
   }
@@ -150,10 +149,18 @@ shinyServer(function(input, output){
     colnames(df)[datacol] <- "X"
     df$tmp <- factor(rep("x", nrow(df)))
     
-    p<- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255))
-    p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
+    if(!input$violin){
+      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255))
+      p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
+    
+    } else{
+      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_violin(fill=rgb(29,0,150,maxColorValue=255),alpha=0.3) + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255),width=0.1)
+      p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
+      
+    }
+    
     print(p)
-    cat("Made the boxplot")
+
   }
   
   )
