@@ -86,7 +86,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                             
                             
                    ),
-                   tabPanel("Test Result",
+                   tabPanel("Statistical Analysis",
                             sidebarLayout(
                               sidebarPanel(checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
                                            radioButtons("alternative", "Alternative", c("Two-sided"="two.sided", "Greater" = "greater", "Lower"="less"),"two.sided"),
