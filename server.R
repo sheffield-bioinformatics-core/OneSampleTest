@@ -158,7 +158,7 @@ shinyServer(function(input, output){
       p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
       
     }
-    
+    if(input$showCI) p <- p + stat_summary(fun.data="mean_cl_normal",colour="red",fun.args = list(mult=1.96))
     print(p)
     
   }
@@ -279,7 +279,7 @@ shinyServer(function(input, output){
     
     sumry
   })
-  
+
   
   
   

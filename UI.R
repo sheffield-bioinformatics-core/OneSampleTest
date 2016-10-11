@@ -70,6 +70,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                                                        max = 50,
                                                        value = 30),
                                            checkboxInput("showMu","Show true mean?", T),
+                                           checkboxInput("showCI", "Show Confidence Interval",value = FALSE),
                                            helpText("The current value of the true mean is defined on the Data Input tab")
                               ),
                               
