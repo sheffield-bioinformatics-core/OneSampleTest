@@ -269,8 +269,15 @@ shinyServer(function(input, output){
       )
     }
     qs <- quantile(df[,datacol])
-    df <- data.frame(mean = mean(na.omit(df[,datacol])), sd = sd(na.omit(df[,datacol])), IQR = IQR(na.omit(df[,datacol])), NAs = sum(is.na(df[,datacol])), n=sum(!is.na(df[,datacol])))
-    round(unlist(c(df,qs)),2)
+    sumry <- RcmdrMisc:::numSummary(df[,datacol])
+    se <- sumry[[2]][,"sd"] / sqrt(sumry$n)
+    ci.lower <- sumry[[2]][,"mean"] - 1.96 * se
+    names(ci.lower) <- "CI.lower"
+    ci.upper <- sumry[[2]][,"mean"] + 1.96 * se
+    names(ci.upper) <- "CI.upper"
+    sumry$table <- cbind(sumry$table, ci.lower,ci.upper)
+    
+    sumry
   })
   
   
