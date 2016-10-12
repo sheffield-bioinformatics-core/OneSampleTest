@@ -158,7 +158,7 @@ shinyServer(function(input, output){
       p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
       
     }
-    
+    if(input$showCI) p <- p + stat_summary(fun.data="mean_cl_normal",colour="red",fun.args = list(mult=1.96))
     print(p)
     
   }
@@ -269,10 +269,17 @@ shinyServer(function(input, output){
       )
     }
     qs <- quantile(df[,datacol])
-    df <- data.frame(mean = mean(na.omit(df[,datacol])), sd = sd(na.omit(df[,datacol])), IQR = IQR(na.omit(df[,datacol])), NAs = sum(is.na(df[,datacol])), n=sum(!is.na(df[,datacol])))
-    round(unlist(c(df,qs)),2)
+    sumry <- RcmdrMisc:::numSummary(df[,datacol])
+    se <- sumry[[2]][,"sd"] / sqrt(sumry$n)
+    ci.lower <- sumry[[2]][,"mean"] - 1.96 * se
+    names(ci.lower) <- "CI.lower"
+    ci.upper <- sumry[[2]][,"mean"] + 1.96 * se
+    names(ci.upper) <- "CI.upper"
+    sumry$table <- cbind(sumry$table, ci.lower,ci.upper)
+    
+    sumry
   })
-  
+
   
   
   
@@ -315,10 +322,12 @@ shinyServer(function(input, output){
       df <- data.frame(ts = rt(10000,df=degfree))
       
       
-      p<- ggplot(df, aes(x=ts)) + 
-        geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
-                       binwidth=.5,
-                       colour="black", fill=rgb(236,0,140,maxColorValue=255)) + stat_function(fun=dnorm,col="red",args=list(mean=mean(df$ts), sd=sd(df$ts)))
+      #p<- ggplot(df, aes(x=ts)) + 
+       # geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+        #               binwidth=.5,
+         #              colour="black", fill=rgb(236,0,140,maxColorValue=255)) + stat_function(fun=dnorm,col="red",args=list(mean=mean(df$ts), sd=sd(df$ts)))
+      
+      p <- ggplot(data.frame(x=c(-4,4)),aes(x)) + stat_function(fun=dt, args=list(df=degfree))
       
       xlim <- c(min(tstat-0.2,min(df$ts)), max(tstat+0.2, max(df$ts)))
       

@@ -69,8 +69,12 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                                                        min = 1,
                                                        max = 50,
                                                        value = 30),
+
+
                                            checkboxInput("showMu","Show Hypothesized mean?", T),
-                                           helpText("The current value of the Hypothesized mean is defined on the Data Input tab")
+                                           checkboxInput("showCI", "Show Confidence Interval",value = FALSE),
+                                           helpText("The current value of the true mean is defined on the Data Input tab")
+
                               ),
                               
                               mainPanel(helpText("The boxplot and histogram of the data are shown below"),
@@ -86,7 +90,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                             
                             
                    ),
-                   tabPanel("Test Result",
+                   tabPanel("Statistical Analysis",
                             sidebarLayout(
                               sidebarPanel(checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
                                            radioButtons("alternative", "Alternative", c("Two-sided"="two.sided", "Greater" = "greater", "Lower"="less"),"two.sided"),
