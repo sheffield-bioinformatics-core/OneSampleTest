@@ -1,2 +1,2 @@
 options(repos = c("CRAN" = "http://cran.ma.imperial.ac.uk"))
-install.packages(c("shiny","ggplot2","reshape2","gridExtra","knitr"))
+install.packages(c("ggplot2","reshape2","gridExtra","pastecs","tidyr", "RcmdrMisc"))
