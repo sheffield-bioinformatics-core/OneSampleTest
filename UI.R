@@ -42,8 +42,8 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                                            textInput("skip", "Number of rows to skip in data file before reading data",value=0),
                                            textInput("dataCol", "Column containing data to test",value=2),
                                            h2("True Mean"),
-                                           helpText("You need to specify the true (or population) mean that you intend to use in the statistical test"),
-                                           textInput("mu","True mean",value = 0),
+                                           helpText("You need to specify the Hypothesized (or population) mean that you intend to use in the statistical test"),
+                                           textInput("mu","Hypothesized mean",value = 0),
                                            helpText("You can choose to transform the data prior to statistical testing"),
                                            radioButtons("transform","Transformation",c("None"="none","Log10"="log.10","Log2"="log.2","Natural Log"="log"),"none")
                                            
@@ -69,8 +69,8 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                                                        min = 1,
                                                        max = 50,
                                                        value = 30),
-                                           checkboxInput("showMu","Show true mean?", T),
-                                           helpText("The current value of the true mean is defined on the Data Input tab")
+                                           checkboxInput("showMu","Show Hypothesized mean?", T),
+                                           helpText("The current value of the Hypothesized mean is defined on the Data Input tab")
                               ),
                               
                               mainPanel(helpText("The boxplot and histogram of the data are shown below"),
@@ -90,7 +90,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                             sidebarLayout(
                               sidebarPanel(checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
                                            radioButtons("alternative", "Alternative", c("Two-sided"="two.sided", "Greater" = "greater", "Lower"="less"),"two.sided"),
-                                           helpText("Don't forget to check that the value of the True mean is correct. You change this on the Data Input tab")
+                                           helpText("Don't forget to check that the value of the Hypothesized mean is correct. You change this on the Data Input tab")
                                            
                               ),
                               mainPanel(h4("Screen output in R"),
