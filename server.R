@@ -335,14 +335,16 @@ shinyServer(function(input, output){
       
       xlim <- c(min(tstat-0.2,min(df$ts)), max(tstat+0.2, max(df$ts)))
       
-      critvals <- c(qt(0.05, degfree),qt(0.95,degfree))
+      if(alternative == "two.sided") critvals <- c(qt(0.025, degfree),qt(0.975,degfree))
+      else critvals <- c(qt(0.05, degfree),qt(0.95,degfree))
+      
       rect1 <- data.frame(xmin = min(critvals[1],xlim),xmax = critvals[1], ymin=-Inf,ymax=Inf)
       rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
       
       p <- switch(alternative,
-                  "two.sided" = p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE),
-                  "greater" = p + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE),
-                  "less" =  p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE)
+                  "two.sided" = p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE),
+                  "greater" = p + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE),
+                  "less" =  p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE)
       )   
       p <- p + geom_vline(xintercept = tstat,lty=2,col="red") + xlim(xlim)
       
@@ -365,11 +367,11 @@ shinyServer(function(input, output){
       
       xlim <- c(min(x-0.2,min(df$ts)), max(x+0.2, max(df$ts)))
       
-      critvals <- c(qbinom(0.05, size=n,prob=0.5),qbinom(0.95,size=n,prob=0.5))
+      critvals <- c(qbinom(0.025, size=n,prob=0.5),qbinom(0.975,size=n,prob=0.5))
       rect1 <- data.frame(xmin = min(critvals[1],xlim),xmax = critvals[1], ymin=-Inf,ymax=Inf)
       rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
       
-      p <- p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="grey20", alpha=0.5, inherit.aes = FALSE)
+      p <- p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="yellow", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="yellow", alpha=0.5, inherit.aes = FALSE)
       
       p <- p + geom_vline(xintercept = x,lty=2,col="red") + xlim(xlim)
       
