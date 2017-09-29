@@ -7,9 +7,9 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                    
                    tabPanel("About",
                             sidebarLayout(
-                              sidebarPanel(img(src="cruk-cambridge-institute.jpg",width=350,height=77), br(),a("cruk.cam.ac.uk",href="www.cruk.cam.ac.uk")),
+                              sidebarPanel(img(src="cruk-cambridge-institute.jpg",width=350,height=77), br(),a("cruk.cam.ac.uk",href="http://www.cruk.cam.ac.uk",target="_blank")),
                               mainPanel(helpText("This app was developed by the Bioinformatics Core of Cancer Research Uk Cambridge Institute to accompany a training course. On the course webpage you will find lecture notes from the course and practical exercises that use this app"),
-                                        a("Introduction to Statistical Analysis",href="http://bioinformatics-core-shared-training.github.io/IntroductionToStats/"),
+                                        a("Introduction to Statistical Analysis",href="http://bioinformatics-core-shared-training.github.io/IntroductionToStats/",target="_blank"),
                                         br(),
                                         helpText(),
                                         br(),
@@ -17,7 +17,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                                         
                                         br(),
                                         br(),
-                                        a("View source Code for app", href="https://github.com/bioinformatics-core-shared-training/OneSampleTest.git")
+                                        a("View source Code for app", href="https://github.com/bioinformatics-core-shared-training/OneSampleTest.git",target="_blank")
                               )
                             )
                             
@@ -114,7 +114,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                                 
                                 helpText("You will be able to re-run this analysis in R by downloading the R code below"),
                                 helpText("We recommend RStudio to run the R code and compile a pdf or HTML report that will show the results of your analysis along with the code used"),
-                                img(src="https://www.rstudio.com/wp-content/uploads/2014/03/blue-125.png"), br(),a("RStudio",href="https://www.rstudio.com/"),br(),
+                                img(src="https://www.rstudio.com/wp-content/uploads/2014/03/blue-125.png"), br(),a("RStudio",href="https://www.rstudio.com/",target="_blank"),br(),
                                 strong("The input file that you are analysing must be in your R working directory in order for the script to run"),
                                 helpText("In order to compile the report in RStudio, you will need to install the ggplot2, rmarkdown, reshape2,gridExtra and knitr packages"),br(),
                                 code("install.packages(c('knitr','ggplot2','rmarkdown,'reshape2','gridExtra'))"),
