@@ -1,6 +1,6 @@
-FROM crukcibioinformatics/shiny-server:latest
+FROM crukcibioinformatics/shiny-base:0.1
 
-RUN R -e "install.packages(c('ggplot2', 'reshape2', 'gridExtra', 'pastecs', 'tidyr', 'RcmdrMisc'), repos = c('CRAN' = 'http://cran.ma.imperial.ac.uk'))"
+RUN R -e 'install.packages("RcmdrMisc", repos = c("CRAN" = "http://cran.ma.imperial.ac.uk"))'
 
 RUN mkdir -p /srv/shiny-server/OneSampleTest/www
 
