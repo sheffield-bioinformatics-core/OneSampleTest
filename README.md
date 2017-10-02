@@ -1,4 +1,5 @@
-OneSidedT
-=========
+One Sample Test
+===============
 
-Shiny app to explore the one-sided t-test
+Shiny app to explore one sample statistical tests (t-test and sign test).
+
