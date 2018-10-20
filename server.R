@@ -100,13 +100,13 @@ shinyServer(function(input, output){
       brx <- pretty(range(df$X), 
                     n = nclass.Sturges(df$X),min.n = 1)
       
-      p <- ggplot(df, aes(x=X)) + geom_histogram(breaks=brx,colour="black", fill=rgb(29,0,150,maxColorValue=255)) + ylab("") + xlim(xlim)
+      p <- ggplot(df, aes(x=X)) + geom_histogram(breaks=brx,colour="black", fill=rgb(31,20,93,maxColorValue=255)) + ylab("") + xlim(xlim)
     }
     
     else {
       binwid <- (max(df$X)-min(df$X)) / input$bins
       print(binwid)
-      p<- ggplot(df, aes(x=X)) + geom_histogram(binwidth=binwid,colour="black", fill=rgb(29,0,150,maxColorValue=255)) + ylab("") + xlim(xlim)
+      p<- ggplot(df, aes(x=X)) + geom_histogram(binwidth=binwid,colour="black", fill=rgb(31,20,93,maxColorValue=255)) + ylab("") + xlim(xlim)
     }
     #  p <- p +  stat_function(fun=dnorm,col="red",args=list(mean=mean(df$X), sd=sd(df$X)))
     
@@ -149,11 +149,11 @@ shinyServer(function(input, output){
     df$tmp <- factor(rep("x", nrow(df)))
     
     if(!input$violin){
-      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot(fill=rgb(236,0,140,maxColorValue = 255),alpha=0.5)
+      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_boxplot(fill=rgb(0,159,218,maxColorValue = 255),alpha=0.5)
       p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
       
     } else{
-      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_violin(fill=rgb(236,0,140,maxColorValue = 255),alpha=0.5) + geom_boxplot(fill="white",width=0.1)
+      p <- ggplot(df, aes(x=tmp,y=X)) + xlab("") + geom_violin(fill=rgb(0,159,218,maxColorValue = 255),alpha=0.5) + geom_boxplot(fill="white",width=0.1)
       p <- p + geom_hline(yintercept = mu,lty=2,col="red") + ylim(xlim) + geom_jitter(position = position_jitter(width = .05)) + coord_flip()
       
     }
@@ -327,7 +327,7 @@ shinyServer(function(input, output){
       #p<- ggplot(df, aes(x=ts)) + 
        # geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
         #               binwidth=.5,
-         #              colour="black", fill=rgb(236,0,140,maxColorValue=255)) + stat_function(fun=dnorm,col="red",args=list(mean=mean(df$ts), sd=sd(df$ts)))
+         #              colour="black", fill=rgb(0,159,218,maxColorValue=255)) + stat_function(fun=dnorm,col="red",args=list(mean=mean(df$ts), sd=sd(df$ts)))
       
       p <- ggplot(data.frame(x=c(-4,4)),aes(x)) + stat_function(fun=dt, args=list(df=degfree))
       
@@ -340,9 +340,9 @@ shinyServer(function(input, output){
       rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
       
       p <- switch(alternative,
-                  "two.sided" = p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE),
-                  "greater" = p + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE),
-                  "less" =  p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill="yellow", alpha=0.5, inherit.aes = FALSE)
+                  "two.sided" = p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill=rgb(249,227,0,maxColorValue=255), alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill=rgb(249,227,0,maxColorValue=255), alpha=0.5, inherit.aes = FALSE),
+                  "greater" = p + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill=rgb(249,227,0,maxColorValue=255), alpha=0.5, inherit.aes = FALSE),
+                  "less" =  p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),fill=rgb(249,227,0,maxColorValue=255), alpha=0.5, inherit.aes = FALSE)
       )   
       p <- p + geom_vline(xintercept = tstat,lty=2,col="red") + xlim(xlim)
       
@@ -361,7 +361,7 @@ shinyServer(function(input, output){
       p<- ggplot(df, aes(x=ts)) + 
         geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
                        binwidth=.5,
-                       colour="black", fill=rgb(236,0,140,maxColorValue=255)) 
+                       colour="black", fill=rgb(0,159,218,maxColorValue=255)) 
       
       xlim <- c(min(x-0.2,min(df$ts)), max(x+0.2, max(df$ts)))
       
@@ -369,7 +369,7 @@ shinyServer(function(input, output){
       rect1 <- data.frame(xmin = min(critvals[1],xlim),xmax = critvals[1], ymin=-Inf,ymax=Inf)
       rect2 <- data.frame(xmin = critvals[2],xmax = max(critvals[2],xlim), ymin=-Inf,ymax=Inf)
       
-      p <- p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="yellow", alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color="yellow", alpha=0.5, inherit.aes = FALSE)
+      p <- p + geom_rect(data=rect1,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color=rgb(249,227,0,maxColorValue=255), alpha=0.5, inherit.aes = FALSE) + geom_rect(data=rect2,aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),color=rgb(249,227,0,maxColorValue=255), alpha=0.5, inherit.aes = FALSE)
       
       p <- p + geom_vline(xintercept = x,lty=2,col="red") + xlim(xlim)
       
