@@ -7,7 +7,7 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                    
                    tabPanel("About",
                             sidebarLayout(
-                              sidebarPanel(img(src="cruk-cambridge-institute.jpg",width=350,height=77), br(),a("cruk.cam.ac.uk",href="http://www.cruk.cam.ac.uk",target="_blank")),
+                              sidebarPanel(img(src="logo-sm.png"), br(),a("sbc.shef.ac.uk",href="http://sbc.shef.ac.uk")),
                               mainPanel(helpText("This app was developed by the Bioinformatics Core of Cancer Research Uk Cambridge Institute to accompany a training course. On the course webpage you will find lecture notes from the course and practical exercises that use this app"),
                                         a("Introduction to Statistical Analysis",href="http://bioinformatics-core-shared-training.github.io/IntroductionToStats/",target="_blank"),
                                         br(),
@@ -23,7 +23,8 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                    ),
                    tabPanel("Data Input",
                             sidebarLayout(
-                              sidebarPanel(h2("Data Import Parameters"),
+                              sidebarPanel(img(src="logo-sm.png"), br(),a("sbc.shef.ac.uk",href="http://sbc.shef.ac.uk"),
+                                           h2("Data Import Parameters"),
                                            fileInput('file1', 'Choose CSV File',
                                                      accept=c('text/csv', 'text/comma-separated-values,text/plain', '.csv')),
                                            helpText("If your file contains column headings, keep this box ticked"),
@@ -58,7 +59,8 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                    
                    tabPanel("Data Distribution",
                             sidebarLayout(
-                              sidebarPanel(h2("Display Parameters"),
+                              sidebarPanel(img(src="logo-sm.png"), br(),a("sbc.shef.ac.uk",href="http://sbc.shef.ac.uk"),
+                                           h2("Display Parameters"),
                                            checkboxInput("violin", "Overlay density on boxplot?", value=FALSE),
                                            helpText("You can use the algorithm in R to guess how many bins to use in the histogram"),
                                            checkboxInput("default.bins",label="Guess optimal bin size?",value=TRUE),
@@ -91,7 +93,8 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                    ),
                    tabPanel("Statistical Analysis",
                             sidebarLayout(
-                              sidebarPanel(checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
+                              sidebarPanel(img(src="logo-sm.png"), br(),a("sbc.shef.ac.uk",href="http://sbc.shef.ac.uk"),
+                                           checkboxInput("do.parametric",label = "Use Parametric Test?",value = TRUE),
                                            radioButtons("alternative", "Alternative", c("Two-sided"="two.sided", "Greater" = "greater", "Lower"="less"),"two.sided"),
                                            helpText("Don't forget to check that the value of the Hypothesized mean is correct. You change this on the Data Input tab")
                                            
@@ -103,7 +106,8 @@ shinyUI(navbarPage("Explore the one-sample t-test",id="nav",
                    ),
                    tabPanel("Reproducible Analysis",
                             sidebarLayout(
-                              sidebarPanel(    h2("Report Parameters"),
+                              sidebarPanel(    img(src="logo-sm.png"), br(),a("sbc.shef.ac.uk",href="http://sbc.shef.ac.uk"),
+                                               h2("Report Parameters"),
                                                #submitButton ('Generate R Code', icon('toggle-right'))
                                                textInput("outfile", "What to call the output R script",value="analysis"),
                                                textInput("name", "Your Name",value="Anon."),
